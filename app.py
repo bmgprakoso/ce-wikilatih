@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restful import Resource, reqparse, Api
 from base import Movies, db
+from resources.training import SingleTraining, TrainingsList
 
 app = Flask(__name__)
 api = Api(app)
@@ -27,7 +28,7 @@ class MoviesList(Resource):
 
     def post(self, movie):
         if Movies.find_by_title(movie):
-            return {' Message': 'Movie with the  title {} already exists'.format(movie)}
+            return {' Message': 'Movie with the title {} already exists'.format(movie)}
 
         args = MoviesList.parser.parse_args()
         item = Movies(movie, args['director'], args['genre'], args['collection'])
@@ -51,18 +52,17 @@ class MoviesList(Resource):
         if item:
             item.delete_()
             return {'Message': '{} has been deleted from records'.format(movie)}
-        return {'Message': '{} is already not on the list'.format()}
+        return {'Message': '{} is already not on the list'.format(movie)}
 
 
-# Creating a class to get all the movies from the database.
 class AllMovies(Resource):
-    # Defining the get method
     def get(self):
         return {'Movies': list(map(lambda x: x.json(), Movies.query.all()))}
-    # Adding the URIs to the api
 
 
 api.add_resource(AllMovies, '/')
 api.add_resource(MoviesList, '/<string:movie>')
+api.add_resource(SingleTraining, '/trainings/<string:id>/')
+api.add_resource(TrainingsList, '/trainings/')
 if __name__ == '__main__':
     app.run()
