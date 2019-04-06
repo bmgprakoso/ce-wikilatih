@@ -32,7 +32,8 @@ class TrainingsList(Resource):
 
     def post(self):
         args = TrainingsList.parser.parse_args()
-        item = Training(args['title'], args['instructor'], args['location'], args['start_date'], args['end_date'])
+        item = Training(title=args['title'], instructor=args['instructor'], location=args['location'],
+                        start_date=args['start_date'], end_date=args['end_date'])
 
         item.save_to()
         return item.json()
